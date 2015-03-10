@@ -1,7 +1,9 @@
 from django.db import models
+from django.conf import settings
 
 
 class List(models.Model):
+    owner = models.OneToOneField(settings.AUTH_USER_MODEL)
     name = models.CharField(max_length=60)
 
     class Meta:
