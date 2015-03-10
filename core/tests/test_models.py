@@ -55,12 +55,12 @@ class ListModelTest(TestCase):
         user = User.objects.create_user(username='user', password='qwe')
         List.objects.create(owner=user, name='Zakupy')
         with self.assertRaises(ValidationError):
-            list = List(owner=user, name='Zakupy')
-            list.full_clean()
+            list_ = List(owner=user, name='Zakupy')
+            list_.full_clean()
 
     def test_can_save_same_list_to_different_user(self):
         user1 = User.objects.create_user(username='user1', password='qwe')
         user2 = User.objects.create_user(username='user2', password='qwe')
         List.objects.create(owner=user1, name='Zakupy')
-        list = List(owner=user2, name='Zakupy')
-        list.full_clean()
+        list_ = List(owner=user2, name='Zakupy')
+        list_.full_clean()
