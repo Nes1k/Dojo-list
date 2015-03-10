@@ -10,7 +10,7 @@ class TestApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_list_with_signin(self):
-        user = User.objects.create_user(username='Admin', password='qwe')
+        user = User.objects.create_user(username='user', password='qwe')
         self.client.force_authenticate(user=user)
         response = self.client.get('/list/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -21,8 +21,7 @@ class TestApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_cannot_save_list_with_empty_name(self):
-        user = user = User.objects.create_user(
-            username='Admin', password='qwe')
+        user = User.objects.create_user(username='user', password='qwe')
         self.client.force_authenticate(user=user)
         data = {'name': ''}
         response = self.client.post('/list/', data, format='json')
@@ -40,5 +39,4 @@ class TestApi(APITestCase):
         self.client.post('/list/', data, format='json')
         response = self.client.get('/list/')
         self.assertNotIn(b'Zakupy', response.content)
-        self.assertEqual(
-            response.content, b'[{"id":2,"name":"Bla"}]')
+        self.assertEqual(response.content, b'[{"id":2,"name":"Bla"}]')

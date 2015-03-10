@@ -3,12 +3,13 @@ from django.conf import settings
 
 
 class List(models.Model):
-    owner = models.OneToOneField(settings.AUTH_USER_MODEL)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL)
     name = models.CharField(max_length=60)
 
     class Meta:
         verbose_name = "Lista"
         verbose_name_plural = "Listy"
+        unique_together = ('owner', 'name')
 
     def __str__(self):
         return self.name
