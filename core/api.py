@@ -21,7 +21,7 @@ class ListViewSet(viewsets.ViewSet):
         list_ = ListSerializer(data=request.data)
         if list_.is_valid():
             list_.save(owner=request.user)
-            return Response(list_.data)
+            return Response(status=status.HTTP_201_CREATED, data=list_.data)
         else:
             return Response(list_.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -32,10 +32,9 @@ class ListViewSet(viewsets.ViewSet):
 
     def update(self, request, pk=None):
         list_ = get_object_or_404(List, pk=pk)
-        serializer = ListSerializer(data=request.data)
+        serializer = ListSerializer(data=request.data, instance=list_)
         if serializer.is_valid():
-            list_.name = serializer.data.get('name')
-            list_.save()
+            serializer.save()
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

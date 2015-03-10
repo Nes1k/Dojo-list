@@ -40,3 +40,22 @@ class TestApi(APITestCase):
         response = self.client.get('/list/')
         self.assertNotIn(b'Zakupy', response.content)
         self.assertEqual(response.content, b'[{"id":2,"name":"Bla"}]')
+
+    def test_put_list(self):
+        user = User.objects.create_user(username='user1', password='qwe')
+        data = {'name': 'Zakupy'}
+        self.client.force_authenticate(user=user)
+        self.client.post('/list/', data, format='json')
+        data = {'name': 'Projekt'}
+        response = self.client.put('/list/1/', data, format='json')
+        self.assertEqual(response.content, b'{"id":1,"name":"Projekt"}')
+
+    def test_delete_list(self):
+        user = User.objects.create_user(username='user1', password='qwe')
+        data = {'name': 'Zakupy'}
+        self.client.force_authenticate(user=user)
+        self.client.post('/list/', data, format='json')
+        response = self.client.delete('/list/1/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.get('/list/')
+        self.assertEqual(response.content, b'[]')
