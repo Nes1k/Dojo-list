@@ -7,7 +7,7 @@ class ListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = List
-        fields = ('owner', 'id', 'name',)
+        fields = ('id', 'name',)
 
 
 class ActionSerializer(serializers.ModelSerializer):

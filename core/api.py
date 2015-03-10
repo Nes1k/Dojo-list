@@ -13,14 +13,14 @@ class ListViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def list(self, request):
-        queryset = List.objects.all()
+        queryset = List.objects.filter(owner=request.user)
         serializer = ListSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def create(self, request):
         list_ = ListSerializer(data=request.data)
         if list_.is_valid():
-            list_.save()
+            list_.save(owner=request.user)
             return Response(list_.data)
         else:
             return Response(list_.errors, status=status.HTTP_400_BAD_REQUEST)

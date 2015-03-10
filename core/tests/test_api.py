@@ -16,7 +16,7 @@ class TestApi(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_cannot_save_list_without_signin(self):
-        data = {'name': '', 'owner': 1}
+        data = {'name': ''}
         response = self.client.post('/list/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -24,6 +24,21 @@ class TestApi(APITestCase):
         user = user = User.objects.create_user(
             username='Admin', password='qwe')
         self.client.force_authenticate(user=user)
-        data = {'name': '', 'owner': user.id}
+        data = {'name': ''}
         response = self.client.post('/list/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_user_see_only_own_list(self):
+        user1 = User.objects.create_user(username='user1', password='qwe')
+        user2 = User.objects.create_user(username='user2', password='qwe')
+        data = {'name': 'Zakupy'}
+        self.client.force_authenticate(user=user1)
+        self.client.post('/list/', data, format='json')
+        self.client.logout()
+        self.client.force_authenticate(user=user2)
+        data = {'name': 'Bla'}
+        self.client.post('/list/', data, format='json')
+        response = self.client.get('/list/')
+        self.assertNotIn(b'Zakupy', response.content)
+        self.assertEqual(
+            response.content, b'[{"id":2,"name":"Bla"}]')
