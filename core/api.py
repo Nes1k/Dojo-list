@@ -18,7 +18,8 @@ class ListViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        list_ = ListSerializer(data=request.data)
+        context = {'request': self.request}
+        list_ = ListSerializer(data=request.data, context=context)
         if list_.is_valid():
             list_.save(owner=request.user)
             return Response(status=status.HTTP_201_CREATED, data=list_.data)
@@ -31,8 +32,10 @@ class ListViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def update(self, request, pk=None):
+        context = {'request': self.request}
         list_ = get_object_or_404(List, pk=pk)
-        serializer = ListSerializer(data=request.data, instance=list_)
+        serializer = ListSerializer(
+            data=request.data, instance=list_, context=context)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

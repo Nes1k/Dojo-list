@@ -59,3 +59,4 @@ target/
 staticfiles
 migrations
 *.sqlite3
+db.sqlite3

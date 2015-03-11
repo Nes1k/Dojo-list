@@ -4,10 +4,18 @@ from .models import List, Action
 
 
 class ListSerializer(serializers.ModelSerializer):
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = List
-        fields = ('id', 'name',)
+        fields = ('owner', 'id', 'name',)
+
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=List.objects.all(),
+                fields=('owner', 'name')
+            )
+        ]
 
 
 class ActionSerializer(serializers.ModelSerializer):
