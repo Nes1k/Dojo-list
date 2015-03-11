@@ -59,3 +59,25 @@ class TestListAPI(ListMixin):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.get('/list/')
         self.assertEqual(response.content, b'[]')
+
+
+class TestAction(ListMixin):
+
+    def test_cannot_save_action_with_empty_text(self):
+        self.makeList(name='Zakupy')
+        data = {'text': ''}
+        response = self.client.post('/list/1/actions/', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_can_save_action(self):
+        self.makeList(name='Zakupy')
+        data = {'text': 'Pomidory'}
+        response = self.client.post('/list/1/actions/', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_duplicate_list_are_invalid(self):
+        self.makeList(name='Zakupy')
+        data = {'text': 'Pomidory'}
+        self.client.post('/list/1/actions/', data, format='json')
+        response = self.client.post('/list/1/actions/', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

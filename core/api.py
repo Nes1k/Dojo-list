@@ -52,25 +52,29 @@ class ActionViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def list(self, request, list_pk=None):
-        actions = Action.objects.filter(list=list_pk)
+        actions = Action.objects.filter(list=list_pk, list__owner=request.user)
         serializer = ActionSerializer(actions, many=True)
         return Response(serializer.data)
 
     def create(self, request, list_pk=None):
-        serializer = ActionSerializer(data=request.data)
+        list_ = get_object_or_404(List, pk=list_pk, owner=request.user)
+        action = Action(list=list_)
+        serializer = ActionSerializer(data=request.data, instance=action)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, list_pk=None, pk=None):
-        action = get_object_or_404(Action, pk=pk)
+        action = get_object_or_404(Action, pk=pk,
+                                   list__owner=request.user)
         serializer = ActionSerializer(action)
         return Response(serializer.data)
 
     def update(self, request, list_pk=None, pk=None):
-        action = get_object_or_404(Action, pk=pk)
+        action = get_object_or_404(Action, pk=pk,
+                                   list__owner=request.user)
         serializer = ActionSerializer(data=request.data, instance=action)
         if serializer.is_valid():
             serializer.save()
@@ -79,6 +83,7 @@ class ActionViewSet(viewsets.ViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, list_pk=None,  pk=None):
-        action = get_object_or_404(Action, pk=pk)
+        action = get_object_or_404(Action, pk=pk,
+                                   list__owner=request.user)
         action.delete()
         return Response(status=status.HTTP_200_OK)

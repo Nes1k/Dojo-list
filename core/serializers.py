@@ -19,6 +19,7 @@ class ListSerializer(serializers.ModelSerializer):
 
 
 class ActionSerializer(serializers.ModelSerializer):
+    list = serializers.HiddenField(default=1)
 
     class Meta:
         model = Action
