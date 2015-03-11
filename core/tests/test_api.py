@@ -81,3 +81,29 @@ class TestAction(ListMixin):
         self.client.post('/list/1/actions/', data, format='json')
         response = self.client.post('/list/1/actions/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_user_see_only_own_action(self):
+        self.makeList(name='Zakupy')
+        data = {'text': 'Pomidory'}
+        self.client.post('/list/1/actions/', data, format='json')
+        self.client.logout()
+        user1 = User.objects.create_user(username='user1', password='qwe')
+        self.client.force_authenticate(user=user1)
+        response = self.client.get('/list/1/actions/')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_put_action(self):
+        self.makeList(name='Zakupy')
+        data1 = {'text': 'Pomidory'}
+        self.client.post('/list/1/actions/', data1, format='json')
+        data2 = {'text': 'Cytryna'}
+        response = self.client.put('/list/1/actions/1/', data2, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn(b'"text":"Cytryna"', response.content)
+
+    def test_delete_action(self):
+        self.makeList(name='Zakupy')
+        data1 = {'text': 'Pomidory'}
+        self.client.post('/list/1/actions/', data1, format='json')
+        response = self.client.delete('/list/1/actions/1/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

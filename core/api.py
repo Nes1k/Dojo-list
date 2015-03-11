@@ -52,6 +52,7 @@ class ActionViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def list(self, request, list_pk=None):
+        list_ = get_object_or_404(List, pk=list_pk, owner=request.user)
         actions = Action.objects.filter(list=list_pk, list__owner=request.user)
         serializer = ActionSerializer(actions, many=True)
         return Response(serializer.data)
