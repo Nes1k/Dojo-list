@@ -8,13 +8,64 @@
 		<title>Dojo-list</title>
 		<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 		<script src="{% static "angular/angular.js" %}"></script>
+		<script src="{% static "angular/underscore-min.js" %}"></script>
+		<script src="{% static "angular/restangular.js" %}"></script>
 		<script src="{% static "app/app.js" %}"></script>
 	</head>
 	<body ng-app="dojoApp">
 	{% verbatim %}
-		<div ng-controller="baseCtrl">
-			<h1 class="text-center">{{1+1}}</h1>
+		<div class="container">
+			<div class="row">
+				<nav class="navbar navbar-default">
+				  <div class="container-fluid">
+				    <div class="navbar-header">
+				      <a class="navbar-brand" href="#">
+				        Dojo-list
+				      </a>
+				    </div>
+				  </div>
+				</nav>
+			</div>
+			<div class="row">
+				<div class="col-sm-4" ng-controller="baseCtrl">
+					<div class="list-group" ng-cloak>
+						<div class="list-group-item">
+							<form name="listAdd" ng-submit="addList(list)" novalidation>
+								<input name="name" ng-model="list.name" class="form-control" required="required" placeholder="Dodaj nową listę">
+							</form>
+						</div>
+						<div class="list-group-item" ng-repeat="item in data.list">
+							<div class="row" ng-if="item.id != edited">
+								<div class="col-xs-2">
+									<span ng-if="$first" class="glyphicon glyphicon-inbox"></span>
+									<span ng-if="!$first" class="glyphicon glyphicon-remove-circle" ng-click="deleteList(item)"></span>
+								</div>
+								<div class="col-xs-8" ng-dblclick="!$first ? setEditedList(item.id) : 0">
+									{{item.name}}	
+								</div>
+								<div class="col-xs-2">
+									<span class="badge progress-bar-success">0</span>	
+								</div>
+							</div>
+							<div class="row" ng-if="item.id == edited">
+								<div class="col-sm-12">
+									<form name="listForm" ng-submit="saveChanges(item)" novalidation>
+										<input name="listName" ng-model="item.name" class="form-control" required="required">
+									</form>
+								</div>
+							</div>
+						</div>  
+					</div>
+				</div>	
+			</div>
+
 		</div>
 	{% endverbatim %}
+		<script type="text/javascript">
+			angular.module('dojoApp')
+				.config(['$httpProvider', function($httpProvider) {
+	    			$httpProvider.defaults.headers.common['X-CSRFToken'] = '{{ csrf_token|escapejs }}';
+				}]);
+		</script>
 	</body>
 </html>
