@@ -1,12 +1,18 @@
 (function(){
-	angular.module('dojoApp', ['restangular'])
+	angular.module('dojoApp', ['ngRoute', 'restangular'])
 		.config(['RestangularProvider',function(RestangularProvider) {
 			RestangularProvider.setRequestSuffix('/')
+		}])
+		.config(['$routeProvider',function($routeProvider) {
+			$routeProvider
+				.when('/:id',{
+
+				})
 		}])
 		.factory('baseList', ['Restangular', function(Restangular){
 			return Restangular.service('list');
 		}])
-		.controller('baseCtrl', ['$scope', 'baseList', function($scope, baseList){
+		.controller('baseCtrl', ['$scope', '$location', 'baseList', function($scope, $location, baseList){
 			$scope.data = {};
 			$scope.edited = '';
 
@@ -36,5 +42,13 @@
 					$scope.data.list.splice($scope.data.list.indexOf(list), 1);
 				})
 			}
+			$scope.redirect = function(id){
+				$location.path('/' + id)
+			}
+		}])
+		.controller('actionListCtrl', ['$scope', 'baseList', function($scope, baseList){
+			baseList.one('1').getList('actions').then(function(data){
+				$scope.actions = data;
+			})
 		}])
 })()

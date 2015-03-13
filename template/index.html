@@ -8,6 +8,7 @@
 		<title>Dojo-list</title>
 		<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 		<script src="{% static "angular/angular.js" %}"></script>
+		<script src="{% static "angular/angular-route.js" %}"></script>
 		<script src="{% static "angular/underscore-min.js" %}"></script>
 		<script src="{% static "angular/restangular.js" %}"></script>
 		<script src="{% static "app/app.js" %}"></script>
@@ -40,7 +41,7 @@
 									<span ng-if="$first" class="glyphicon glyphicon-inbox"></span>
 									<span ng-if="!$first" class="glyphicon glyphicon-remove-circle" ng-click="deleteList(item)"></span>
 								</div>
-								<div class="col-xs-8" ng-dblclick="!$first ? setEditedList(item.id) : 0">
+								<div class="col-xs-8" ng-click="redirect(item.id)" ng-dblclick="!$first ? setEditedList(item.id) : 0">
 									{{item.name}}	
 								</div>
 								<div class="col-xs-2">
@@ -57,8 +58,34 @@
 						</div>  
 					</div>
 				</div>	
-			</div>
+				<div class="col-sm-8" ng-controller="actionListCtrl">
+					<div class="panel panel-default">
+			  			<div class="panel-body">
+			  			<form novalidation ng-submit="addAction(action)">
+			  				<input ng-model="action.text" class="form-control" required="required" placeholder="Dodaj nową rzecz do zrobienia" >		
+			  			</form>
+			  			</div>
+					</div>	
 
+					<div class="well well-sm" ng-repeat="item in actions | orderBy:'done'">
+						<div class="row" ng-if="item.id != edited">
+							<div class="col-sm-9" ng-dblclick="editAction(item.id)">
+			  					{{item.text}}
+			  				</div>
+			  				<div class="col-sm-3 text-right">
+								<input type="checkbox" ng-model="item.done" ng-click="saveAction(item)">
+			  				</div>
+						</div>
+						<div class="row" ng-if="item.id == edited">
+							<div class="col-sm-12">
+							<form novalidation ng-submit="saveAction(item)">
+								<input name="listName" ng-model="item.text" class="form-control" required="required">
+							</form>
+							</div>
+						</div>
+					</div>		
+				</div>	
+			</div>
 		</div>
 	{% endverbatim %}
 		<script type="text/javascript">
