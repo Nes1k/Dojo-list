@@ -12,6 +12,9 @@
 		<script src="{% static "angular/underscore-min.js" %}"></script>
 		<script src="{% static "angular/restangular.js" %}"></script>
 		<script src="{% static "app/app.js" %}"></script>
+		<style type="text/css">
+			.well{margin-bottom: 0.75em; }
+		</style>
 	</head>
 	<body ng-app="dojoApp">
 	{% verbatim %}
@@ -27,8 +30,8 @@
 				  </div>
 				</nav>
 			</div>
-			<div class="row">
-				<div class="col-sm-4" ng-controller="baseCtrl">
+			<div class="row" ng-controller="baseCtrl">
+				<div class="col-sm-4">
 					<div class="list-group" ng-cloak>
 						<div class="list-group-item">
 							<form name="listAdd" ng-submit="addList(list)" novalidation>

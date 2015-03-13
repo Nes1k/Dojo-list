@@ -5,9 +5,9 @@
 		}])
 		.config(['$routeProvider',function($routeProvider) {
 			$routeProvider
-				.when('/:id',{
-
+				.when('/list/:id',{
 				})
+				.otherwise({})
 		}])
 		.factory('baseList', ['Restangular', function(Restangular){
 			return Restangular.service('list');
@@ -18,6 +18,7 @@
 
 			baseList.getList().then(function(list){
 				$scope.data.list = list;
+				$scope.data.inbox = list[0].id;
 			})
 
 			$scope.setEditedList = function(id){
@@ -43,12 +44,41 @@
 				})
 			}
 			$scope.redirect = function(id){
-				$location.path('/' + id)
+				$location.path('list/' + id)
 			}
 		}])
-		.controller('actionListCtrl', ['$scope', 'baseList', function($scope, baseList){
-			baseList.one('1').getList('actions').then(function(data){
-				$scope.actions = data;
-			})
+		.controller('actionListCtrl', ['$scope', '$route', '$location', '$routeParams', 'baseList',  function($scope, $route, $location, $routeParams, baseList){
+			$scope.edited = '';
+
+			$scope.$on('$routeChangeSuccess', function(){
+				if($location.path().indexOf('/list/') == 0){
+					var id = $routeParams['id']
+				} else {
+					var id = 1;
+				}
+				baseList.one(id).getList('actions').then(function(data){
+					$scope.actions = data;
+				})
+			});
+			$scope.addAction = function(item){
+				$scope.actions.post(item).then(function(data){
+					$scope.actions.push(data);
+					$scope.action ={};
+				})
+			}
+
+			$scope.saveAction = function(item){
+				item.put().then(function(){
+					$scope.edited = '';
+				})
+			}
+
+			$scope.editAction= function(id){
+				$scope.edited = id;
+			}
+
+			$scope.doneAction = function(item){
+				item.put();
+			}
 		}])
 })()
