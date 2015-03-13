@@ -5,10 +5,11 @@ from .models import List, Action
 
 class ListSerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    todo = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = List
-        fields = ('owner', 'id', 'name',)
+        fields = ('owner', 'id', 'name', 'todo')
 
         validators = [
             serializers.UniqueTogetherValidator(

@@ -48,7 +48,7 @@
 									{{item.name}}	
 								</div>
 								<div class="col-xs-2">
-									<span class="badge progress-bar-success">0</span>	
+									<span class="badge progress-bar-success">{{item.todo}}</span>	
 								</div>
 							</div>
 							<div class="row" ng-if="item.id == edited">
@@ -72,10 +72,11 @@
 
 					<div class="well well-sm" ng-repeat="item in actions | orderBy:'done'">
 						<div class="row" ng-if="item.id != edited">
-							<div class="col-sm-9" ng-dblclick="editAction(item.id)">
+							<div class="col-xs-9" ng-dblclick="editAction(item.id)">
+								<span class="glyphicon glyphicon-remove-circle" ng-click="deleteAction(item)"></span>&nbsp
 			  					{{item.text}}
 			  				</div>
-			  				<div class="col-sm-3 text-right">
+			  				<div class="col-xs-3 text-right">
 								<input type="checkbox" ng-model="item.done" ng-click="saveAction(item)">
 			  				</div>
 						</div>

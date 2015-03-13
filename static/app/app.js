@@ -12,7 +12,7 @@
 		.factory('baseList', ['Restangular', function(Restangular){
 			return Restangular.service('list');
 		}])
-		.controller('baseCtrl', ['$scope', '$location', 'baseList', function($scope, $location, baseList){
+		.controller('baseCtrl', function($scope, $location, baseList){
 			$scope.data = {};
 			$scope.edited = '';
 
@@ -46,8 +46,8 @@
 			$scope.redirect = function(id){
 				$location.path('list/' + id)
 			}
-		}])
-		.controller('actionListCtrl', ['$scope', '$route', '$location', '$routeParams', 'baseList',  function($scope, $route, $location, $routeParams, baseList){
+		})
+		.controller('actionListCtrl', function($scope, $route, $location, $routeParams, baseList){
 			$scope.edited = '';
 
 			$scope.$on('$routeChangeSuccess', function(){
@@ -80,5 +80,11 @@
 			$scope.doneAction = function(item){
 				item.put();
 			}
-		}])
+
+			$scope.deleteAction = function(item){
+				item.remove().then(function(){
+					$scope.actions.splice($scope.actions.indexOf(item), 1);
+				})
+			}
+		})
 })()
