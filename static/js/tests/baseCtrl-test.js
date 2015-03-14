@@ -9,7 +9,10 @@ describe("Test podstawowego kontrolera", function() {
 	beforeEach(function(){
 		angular.mock.inject(function($httpBackend){
 			backend = $httpBackend;
-			backend.expect('GET', '/list/').respond([{"id": 1, "name": "Inbox", "todo": 0}, {"id": 2, "name": "Zakupy", "todo": 0}])
+			backend.expect('GET', '/list/').respond([
+				{"id": 1, "name": "Inbox", "todo": 0},
+				{"id": 2, "name": "Zakupy", "todo": 0}
+			])
 		})
 	})
 
@@ -50,7 +53,8 @@ describe("Test podstawowego kontrolera", function() {
 	});
 
 	it("dodawanie listy", function() {
-		backend.expect('POST', '/list/').respond({"id": 3, "name": "Projekt", "todo": 0})
+		backend.expect('POST', '/list/')
+			.respond({"id": 3, "name": "Projekt", "todo": 0})
 		mockScope.list = {};
 		mockScope.list.name = 'Projekt'
 		mockScope.addList(mockScope.list.name)

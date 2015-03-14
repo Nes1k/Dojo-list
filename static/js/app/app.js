@@ -67,14 +67,14 @@
 				})
 			}
 
+			$scope.editAction= function(id){
+				$scope.edited = id;
+			}
+
 			$scope.saveAction = function(item){
 				item.put().then(function(){
 					$scope.edited = '';
 				})
-			}
-
-			$scope.editAction= function(id){
-				$scope.edited = id;
 			}
 
 			$scope.doneAction = function(item){
