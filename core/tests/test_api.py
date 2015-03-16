@@ -84,11 +84,19 @@ class TestAction(ListMixin):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Action.objects.all().count(), 1)
 
-    def test_duplicate_list_are_invalid(self):
+    def test_POST_duplicate_list_are_invalid(self):
         self.makeList(name='Zakupy')
         data = {'text': 'Pomidory'}
         self.client.post('/list/1/actions/', data, format='json')
         response = self.client.post('/list/1/actions/', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_PUT_duplicate_list_are_invalid(self):
+        self.makeList(name='Zakupy')
+        data = {'text': 'Pomidory'}
+        self.client.post('/list/1/actions/', data, format='json')
+        self.client.post('/list/1/actions/', {'text': 'Zakupy'}, format='json')
+        response = self.client.put('/list/1/actions/2/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_user_see_only_own_action(self):

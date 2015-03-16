@@ -59,9 +59,10 @@ class ActionViewSet(viewsets.ViewSet):
 
     def create(self, request, list_pk=None):
         list_ = get_object_or_404(List, pk=list_pk, owner=request.user)
-        serializer = ActionSerializer(data=request.data)
+        context = {'list': list_}
+        serializer = ActionSerializer(data=request.data, context=context)
         if serializer.is_valid():
-            serializer.save(list=list_)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -76,9 +77,10 @@ class ActionViewSet(viewsets.ViewSet):
         action = get_object_or_404(Action, pk=pk,
                                    list__owner=request.user)
         list_ = get_object_or_404(List, pk=list_pk, owner=request.user)
-        serializer = ActionSerializer(data=request.data, instance=action)
+        context = {'list': list_}
+        serializer = ActionSerializer(data=request.data, instance=action, context=context)
         if serializer.is_valid():
-            serializer.save(list=list_)
+            serializer.save()
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

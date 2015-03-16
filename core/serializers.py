@@ -22,6 +22,13 @@ class ListSerializer(serializers.ModelSerializer):
 class ActionSerializer(serializers.ModelSerializer):
     list = serializers.HiddenField(default=1)
 
+    def validate_list(self, value):
+        try:
+            list_ = self.context['list']
+            value = list_
+        finally:
+            return value
+
     class Meta:
         model = Action
         fields = ('id', 'text', 'done', 'list')
