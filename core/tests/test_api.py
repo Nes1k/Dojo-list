@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from core.models import List, Action
+
 
 class ListMixin(APITestCase):
 
@@ -28,10 +30,12 @@ class TestListAPI(ListMixin):
         data = {'name': ''}
         response = self.client.post('/list/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(List.objects.all().count(), 0)
 
     def test_cannot_save_list_with_empty_name(self):
         response = self.makeList()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(List.objects.all().count(), 0)
 
     def test_duplicate_list_are_invalid(self):
         self.makeList('Zakupy')
@@ -45,13 +49,15 @@ class TestListAPI(ListMixin):
         self.makeList(name='Bla', username='user2')
         response = self.client.get('/list/')
         self.assertNotIn(b'Zakupy', response.content)
-        self.assertEqual(response.content, b'[{"id":2,"name":"Bla"}]')
+        self.assertEqual(response.content, b'[{"id":2,"name":"Bla","todo":0}]')
 
     def test_put_list(self):
         self.makeList('Zakupy')
         data = {'name': 'Projekt'}
         response = self.client.put('/list/1/', data, format='json')
-        self.assertEqual(response.content, b'{"id":1,"name":"Projekt"}')
+        self.assertEqual(
+            response.content, b'{"id":1,"name":"Projekt","todo":0}')
+        self.assertEqual(List.objects.all().count(), 1)
 
     def test_delete_list(self):
         self.makeList('Zakupy')
@@ -59,6 +65,7 @@ class TestListAPI(ListMixin):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = self.client.get('/list/')
         self.assertEqual(response.content, b'[]')
+        self.assertEqual(List.objects.all().count(), 0)
 
 
 class TestAction(ListMixin):
@@ -68,12 +75,14 @@ class TestAction(ListMixin):
         data = {'text': ''}
         response = self.client.post('/list/1/actions/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(Action.objects.all().count(), 0)
 
     def test_can_save_action(self):
         self.makeList(name='Zakupy')
         data = {'text': 'Pomidory'}
         response = self.client.post('/list/1/actions/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Action.objects.all().count(), 1)
 
     def test_duplicate_list_are_invalid(self):
         self.makeList(name='Zakupy')
@@ -100,6 +109,7 @@ class TestAction(ListMixin):
         response = self.client.put('/list/1/actions/1/', data2, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn(b'"text":"Cytryna"', response.content)
+        self.assertEqual(Action.objects.all().count(), 1)
 
     def test_delete_action(self):
         self.makeList(name='Zakupy')
@@ -107,3 +117,4 @@ class TestAction(ListMixin):
         self.client.post('/list/1/actions/', data1, format='json')
         response = self.client.delete('/list/1/actions/1/')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Action.objects.all().count(), 0)

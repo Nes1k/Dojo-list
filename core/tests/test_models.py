@@ -41,6 +41,12 @@ class ListAndActionModelsTest(TestCase):
         action = Action.objects.create(text='Pomidory', list=list2)
         action.full_clean()
 
+    def test_can_recount_todo(self):
+        user = User.objects.create_user(username='user', password='qwe')
+        list_ = List.objects.create(owner=user, name='Zakupy')
+        Action.objects.create(text='Pomidory', list=list_)
+        self.assertEqual(list_.todo, 1)
+
 
 class ListModelTest(TestCase):
 
