@@ -14,6 +14,8 @@ class ListViewSet(viewsets.ViewSet):
 
     def list(self, request):
         queryset = List.objects.filter(owner=request.user)
+        if not queryset:
+            List.objects.create(owner=request.user, name="Inbox")
         serializer = ListSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -78,7 +80,8 @@ class ActionViewSet(viewsets.ViewSet):
                                    list__owner=request.user)
         list_ = get_object_or_404(List, pk=list_pk, owner=request.user)
         context = {'list': list_}
-        serializer = ActionSerializer(data=request.data, instance=action, context=context)
+        serializer = ActionSerializer(
+            data=request.data, instance=action, context=context)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

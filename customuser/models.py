@@ -4,7 +4,7 @@ from django.contrib.auth.models import (
 )
 
 
-class UserManager(BaseUserManager):
+class CustomUserManager(BaseUserManager):
 
     def create_user(self, email, password=None):
         if not email:
@@ -18,10 +18,10 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=False, unique=True)
 
-    objects = UserManager()
+    objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

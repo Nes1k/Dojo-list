@@ -61,7 +61,7 @@ INSTALLED_APPS = (
     'allauth.account',
     'crispy_forms',
     'rest_framework',
-    'user',
+    'customuser',
     'core',
 )
 
@@ -75,7 +75,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-AUTH_USER_MODEL = 'user.User'
+AUTH_USER_MODEL = 'customuser.CustomUser'
 
 SITE_ID = 1
 LOGIN_URL = '/accounts/login/'
