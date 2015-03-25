@@ -48,11 +48,12 @@
 									<span ng-if="$first" class="glyphicon glyphicon-inbox"></span>
 									<span ng-if="!$first" class="glyphicon glyphicon-remove-circle" ng-click="deleteList(item)"></span>
 								</div>
-								<div class="col-xs-8" ng-dblclick="!$first ? setEditedList(item.id) : 0" ng-click="redirect(item.id)">
+								<div class="col-xs-7" ng-click="redirect(item.id)">
 									{{item.name}}	
 								</div>
-								<div class="col-xs-2">
-									<span class="badge progress-bar-success">{{item.todo}}</span>	
+								<div class="col-xs-3">
+									<span class="badge progress-bar-success pull-right">{{item.todo}}</span>
+									<span class="glyphicon glyphicon-pencil" ng-click=" !$first ? setEditedList(item.id) : 0 "></span>	
 								</div>
 							</div>
 							<div class="row" ng-if="item.id == edited">
