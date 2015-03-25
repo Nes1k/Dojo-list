@@ -27,12 +27,16 @@
 				        Dojo-list
 				      </a>
 				    </div>
+				    <div class="collapse navbar-collapse navbar-ex1-collapse">
+					    <ul class="nav navbar-nav navbar-right">
+					    <li><a href="/accounts/logout">Wyloguj</a></li>
+					    </ul>
 				  </div>
 				</nav>
 			</div>
 			<div class="row" ng-controller="baseCtrl">
 				<div class="col-sm-4">
-					<div class="list-group" ng-cloak>
+					<div class="list-group">
 						<div class="list-group-item">
 							<form name="listAdd" ng-submit="addList(list)" novalidation>
 								<input name="name" ng-model="list.name" class="form-control" required="required" placeholder="Dodaj nową listę">
